@@ -166,10 +166,10 @@ class StoryEdge(graphene.ObjectType):
 
 
 class StoryConnection(graphene.ObjectType):
-    stoies = graphene.List(StoryEdge)
+    stories = graphene.List(StoryType)
     total_stories = graphene.Int()
 
-    edges = graphene.List(PassageEdge)
+    edges = graphene.List(StoryEdge)
     page_info = graphene.Field(graphene.PageInfo)
 
     def resolve_stories(self, info):
