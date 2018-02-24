@@ -47,12 +47,12 @@ class ChoiceConnection(graphene.ObjectType):
         return self.paginator.queryset.count()
 
     def resolve_edges(self, info):
-        return [ChoiceEdge(node=edge, cursor=self.paginator.cursor(edge)) for edge in self]
+        return [ChoiceEdge(node=node, cursor=self.paginator.cursor(node)) for node in self]
 
     def resolve_page_info(self, info):
         return graphene.PageInfo(
-            start_cursor=self.paginator.cursor(self[0]),
-            end_cursor=self.paginator.cursor(self[-1]), # "Negative indexing is not supported."
+            start_cursor=self.paginator.cursor(self.items[0]),
+            end_cursor=self.paginator.cursor(self.items.reverse()[0]),
             has_previous_page=self.has_previous,
             has_next_page=self.has_next,
         )
@@ -114,12 +114,12 @@ class PassageConnection(graphene.ObjectType):
         return self.paginator.queryset.count()
 
     def resolve_edges(self, info):
-        return [PassageEdge(node=edge, cursor=self.paginator.cursor(edge)) for edge in self]
+        return [PassageEdge(node=node, cursor=self.paginator.cursor(node)) for node in self]
 
     def resolve_page_info(self, info):
         return graphene.PageInfo(
-            start_cursor=self.paginator.cursor(self[0]),
-            end_cursor=self.paginator.cursor(self[-1]),
+            start_cursor=self.paginator.cursor(self.items[0]),
+            end_cursor=self.paginator.cursor(self.items[-1]), # we need to use negative index as this QuerySet is turned into a list
             has_previous_page=self.has_previous,
             has_next_page=self.has_next,
         )
@@ -146,7 +146,7 @@ class StoryType(graphene.ObjectType):
     )
 
     def resolve_passage_connection(self, info, first=None, after=None, last=None, before=None):
-        passages = self.passages.all()
+        passages = Passage.objects.filter(story_id=self.pk)
         paginator = CursorPaginator(passages, ordering=('id',))
         return paginator.page(
             first=first,
@@ -179,12 +179,12 @@ class StoryConnection(graphene.ObjectType):
         return self.paginator.queryset.count()
 
     def resolve_edges(self, info):
-        return [StoryEdge(node=edge, cursor=self.paginator.cursor(edge)) for edge in self]
+        return [StoryEdge(node=node, cursor=self.paginator.cursor(node)) for node in self.items]
 
     def resolve_page_info(self, info):
         return graphene.PageInfo(
-            start_cursor=self.paginator.cursor(self[0]),
-            end_cursor=self.paginator.cursor(self[-1]),
+            start_cursor=self.paginator.cursor(self.items[0]),
+            end_cursor=self.paginator.cursor(self.items.reverse()[0]),
             has_previous_page=self.has_previous,
             has_next_page=self.has_next,
         )
