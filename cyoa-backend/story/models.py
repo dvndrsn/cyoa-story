@@ -5,8 +5,12 @@ class Story(models.Model):
     title = models.CharField(max_length=50)
     subtitle = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
+    date_published = models.DateField()
     published_year = models.CharField(max_length=4)
     author = models.CharField(max_length=50)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.author} - {self.title}'

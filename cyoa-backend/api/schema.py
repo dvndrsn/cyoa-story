@@ -134,7 +134,11 @@ class StoryType(graphene.ObjectType):
     subtitle = graphene.String()
     description = graphene.String()
     published_year = graphene.String()
+    date_published =graphene.String()
     author = graphene.String()
+
+    created_at = graphene.String()
+    updated_at = graphene.String()
 
     passage = graphene.Node.Field(PassageType)
     passage_connection = graphene.Field(
