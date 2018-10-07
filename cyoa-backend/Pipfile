@@ -8,9 +8,8 @@ name = "pypi"
 [packages]
 
 graphene = "*"
-django = "*"
+Django = "*"
 graphene-django = "*"
-django-cursor-pagination = "*"
 django-cors-headers = "*"
 
 

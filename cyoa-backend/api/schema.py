@@ -1,5 +1,4 @@
 import graphene
-from cursor_pagination import CursorPaginator
 import graphene_django
 
 from story.models import Passage, Story, Character, Choice
@@ -11,10 +10,18 @@ class CharacterType(graphene.ObjectType):
         interfaces = (graphene.Node, )
     
     name = graphene.String()
+    in_passage_connection = graphene.ConnectionField('api.schema.PassageConnection')
+
+    def resolve_in_passage_connection(self, info, **kwargs):
+        return info.context.loaders.passage_from_pov_character.load(self.id)
+
+    @classmethod
+    def is_type_of(cls, root, info):
+        return isinstance(root, Character)
 
     @classmethod
     def get_node(cls, info, id):
-        return Character.objects.get(pk=id)
+        return info.context.loaders.character.load(int(id))
 
 
 class ChoiceType(graphene.ObjectType):
@@ -25,37 +32,22 @@ class ChoiceType(graphene.ObjectType):
     description = graphene.String()
     is_main_story = graphene.Boolean()
 
-    to_passage = graphene.Field('api.schema.PassageType') 
+    from_passage = graphene.Field('api.schema.PassageType')
+    to_passage = graphene.Field('api.schema.PassageType')
+
+    @classmethod
+    def is_type_of(cls, root, info):
+        return isinstance(root, Choice)
+
+    @classmethod
+    def get_node(cls, info, id):
+        return info.context.loaders.choice.load(int(id))
 
 
-class ChoiceEdge(graphene.ObjectType):
-    cursor = graphene.String()
-    node = graphene.Field('api.schema.ChoiceType')
+class ChoiceConnection(graphene.Connection):
 
-
-class ChoiceConnection(graphene.ObjectType):
-    choices = graphene.List(ChoiceType)
-    total_choices = graphene.Int()
-
-    edges = graphene.List(ChoiceEdge)
-    page_info = graphene.Field(graphene.PageInfo)
-
-    def resolve_choices(self, info):
-        return self.paginator.queryset.all()
-
-    def resolve_total_choices(self, info):
-        return self.paginator.queryset.count()
-
-    def resolve_edges(self, info):
-        return [ChoiceEdge(node=node, cursor=self.paginator.cursor(node)) for node in self]
-
-    def resolve_page_info(self, info):
-        return graphene.PageInfo(
-            start_cursor=self.paginator.cursor(self.items[0]),
-            end_cursor=self.paginator.cursor(self.items.reverse()[0]),
-            has_previous_page=self.has_previous,
-            has_next_page=self.has_next,
-        )
+    class Meta:
+        node = ChoiceType
 
 
 class PassageType(graphene.ObjectType):
@@ -69,60 +61,30 @@ class PassageType(graphene.ObjectType):
 
     pov_character = graphene.Field(CharacterType)
     all_choices = graphene.List(ChoiceType)
-    choice_connection = graphene.Field(
-        'api.schema.ChoiceConnection',
-        first=graphene.Int(),
-        after=graphene.String(),
-        last=graphene.Int(),
-        before=graphene.String(),
-    )
+    from_choice_connection = graphene.ConnectionField(ChoiceConnection)
+
+    def resolve_pov_character(self, info):
+        return info.context.loaders.character.load(self.pov_character_id)
 
     def resolve_all_choices(self, info):
-        return self.to_choices.all()
+        return info.context.loaders.choice_from_frompassage.load(self.id)
 
-    def resolve_choice_connection(self, info, first=None, after=None, last=None, before=None):
-        choices = self.to_choices.all()
-        paginator = CursorPaginator(choices, ordering=('id',))
-        return paginator.page(
-            first=first,
-            after=after,
-            last=last,
-            before=before,
-        )
+    def resolve_from_choice_connection(self, info, **kwargs):
+        return info.context.loaders.choice_from_topassage.load(self.id)
+
+    @classmethod
+    def is_type_of(cls, root, info):
+        return isinstance(root, Passage)
 
     @classmethod
     def get_node(cls, info, id):
-        return Passage.objects.get(pk=id)
+        return info.context.loaders.passage.load(int(id))
 
 
-class PassageEdge(graphene.ObjectType):
-    node = graphene.Field(PassageType)
-    cursor = graphene.String()
+class PassageConnection(graphene.Connection):
 
-
-class PassageConnection(graphene.ObjectType):
-    passages = graphene.List(PassageType)
-    total_passages = graphene.Int()
-
-    edges = graphene.List(PassageEdge)
-    page_info = graphene.Field(graphene.PageInfo)
-
-    def resolve_passages(self, info):
-        return self.paginator.queryset.all()
-
-    def resolve_total_passages(self, info):
-        return self.paginator.queryset.count()
-
-    def resolve_edges(self, info):
-        return [PassageEdge(node=node, cursor=self.paginator.cursor(node)) for node in self]
-
-    def resolve_page_info(self, info):
-        return graphene.PageInfo(
-            start_cursor=self.paginator.cursor(self.items[0]),
-            end_cursor=self.paginator.cursor(self.items[-1]), # we need to use negative index as this QuerySet is turned into a list
-            has_previous_page=self.has_previous,
-            has_next_page=self.has_next,
-        )
+    class Meta:
+        node = PassageType
 
 
 class StoryType(graphene.ObjectType):
@@ -140,82 +102,32 @@ class StoryType(graphene.ObjectType):
     created_at = graphene.String()
     updated_at = graphene.String()
 
-    passage = graphene.Node.Field(PassageType)
-    passage_connection = graphene.Field(
-        PassageConnection,
-        first=graphene.Int(),
-        after=graphene.String(),
-        last=graphene.Int(),
-        before=graphene.String(),
-    )
+    passage_connection = graphene.ConnectionField(PassageConnection)
 
     def resolve_passage_connection(self, info, first=None, after=None, last=None, before=None):
-        passages = Passage.objects.filter(story_id=self.pk)
-        paginator = CursorPaginator(passages, ordering=('id',))
-        return paginator.page(
-            first=first,
-            after=after,
-            last=last,
-            before=before
-        )
+        return info.context.loaders.passage_from_story.load(self.id)
+
+    @classmethod
+    def is_type_of(cls, root, info):
+        return isinstance(root, Story)
     
     @classmethod
     def get_node(cls, info, id):
-        return Story.objects.get(pk=id)
-    
-
-class StoryEdge(graphene.ObjectType):
-    node = graphene.Field(StoryType)
-    cursor = graphene.String()
+        return info.context.loaders.story.load(int(id))
 
 
-class StoryConnection(graphene.ObjectType):
-    stories = graphene.List(StoryType)
-    total_stories = graphene.Int()
+class StoryConnection(graphene.Connection):
 
-    edges = graphene.List(StoryEdge)
-    page_info = graphene.Field(graphene.PageInfo)
-
-    def resolve_stories(self, info):
-        return self.paginator.queryset.all()
-
-    def resolve_total_stories(self, info):
-        return self.paginator.queryset.count()
-
-    def resolve_edges(self, info):
-        return [StoryEdge(node=node, cursor=self.paginator.cursor(node)) for node in self.items]
-
-    def resolve_page_info(self, info):
-        return graphene.PageInfo(
-            start_cursor=self.paginator.cursor(self.items[0]),
-            end_cursor=self.paginator.cursor(self.items.reverse()[0]),
-            has_previous_page=self.has_previous,
-            has_next_page=self.has_next,
-        )
+    class Meta:
+        node = StoryType
 
 
 class Query(graphene.ObjectType):
-    story = graphene.Node.Field(StoryType)
-    story_connection = graphene.Field(
-        StoryConnection,
-        first=graphene.Int(),
-        after=graphene.String(),
-        last=graphene.Int(),
-        before=graphene.String(),
-    )
-
-    def resolve_story(self, info, id):
-        return Story.objects.get(id=id)
+    story_connection = graphene.ConnectionField(StoryConnection)
+    node = graphene.Node.Field()
 
     def resolve_story_connection(self, info, first=None, after=None, last=None, before=None):
-        stories = Story.objects.all()
-        paginator = CursorPaginator(stories, ordering=('id',))
-        return paginator.page(
-            first=first,
-            after=after,
-            last=last,
-            before=before
-        )
+        return Story.objects.all()
 
-    
+
 schema = graphene.Schema(query=Query)
