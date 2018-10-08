@@ -14,6 +14,12 @@ class ChoiceType(graphene.ObjectType):
     from_passage = graphene.Field('api.query.passage.PassageType')
     to_passage = graphene.Field('api.query.passage.PassageType')
 
+    def resolve_from_passage(self, info, **kwargs):
+        return info.context.loaders.passage.load(self.from_passage_id)
+
+    def resolve_to_passage(self, info, **kwargs):
+        return info.context.loaders.passage.load(self.to_passage_id)
+
     @classmethod
     def is_type_of(cls, root, info):
         return isinstance(root, Choice)
