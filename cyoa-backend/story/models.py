@@ -1,19 +1,27 @@
 from django.db import models
 
 
+class Author(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    twitter_account = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
 class Story(models.Model):
     title = models.CharField(max_length=50)
     subtitle = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
-    date_published = models.DateField()
     published_year = models.CharField(max_length=4)
-    author = models.CharField(max_length=50)
+    author = models.ForeignKey('Author', on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.author} - {self.title}'
+        return f'{self.title} ({self.published_year})'
 
 
 class Choice(models.Model):

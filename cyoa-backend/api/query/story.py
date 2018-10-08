@@ -12,14 +12,13 @@ class StoryType(graphene.ObjectType):
     subtitle = graphene.String()
     description = graphene.String()
     published_year = graphene.String()
-    date_published =graphene.String()
-    author = graphene.String()
 
-    created_at = graphene.String()
-    updated_at = graphene.String()
-
+    author = graphene.Field('api.query.author.AuthorType')
     passage_connection = graphene.ConnectionField('api.query.passage.PassageConnection')
 
+    def resolve_author(self, info):
+        return info.context.loaders.author.load(self.author_id)
+    
     def resolve_passage_connection(self, info, first=None, after=None, last=None, before=None):
         return info.context.loaders.passage_from_story.load(self.id)
 

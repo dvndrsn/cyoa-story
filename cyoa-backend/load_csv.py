@@ -1,6 +1,13 @@
 import csv
 
-from story.models import Passage, Choice, Character, Story
+from story.models import Passage, Choice, Character, Story, Author
+
+print('creating Author...')
+rnorth, _ = Author.objects.get_or_create(
+    first_name='Ryan',
+    last_name='North',
+    twitter_account='@ryanqnorth',
+)
 
 Story.objects.all().delete()
 
@@ -10,7 +17,7 @@ story, _ = Story.objects.get_or_create(
     subtitle='A Chooseable-Path Adventure',
     description='What if Romeo never met Juliet? What if Juliet got really buff instead of moping around the castle all day? What if they teamed up to take over Verona with robot suits?',
     published_year='2016',
-    author='Ryan North',
+    author=rnorth,
 )
 print(f'Created story: {story}')
 
