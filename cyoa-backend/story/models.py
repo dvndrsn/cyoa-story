@@ -47,12 +47,6 @@ class Passage(models.Model):
         through_fields=('from_passage', 'to_passage'),
         symmetrical=False,
     )
-    # from_passages = models.ManyToManyField(
-    #     'self',
-    #     through='Choice',
-    #     through_fields=('to_passage', 'from_passage'),
-    #     symmetrical=False,
-    # )
     pov_character = models.ForeignKey(
         'Character',
         on_delete=models.CASCADE,
