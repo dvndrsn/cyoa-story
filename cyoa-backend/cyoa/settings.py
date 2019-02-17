@@ -125,4 +125,4 @@ STATIC_URL = '/static/'
 
 # CORS WHITELISTED HOSTS
 
-CORS_ORIGIN_WHITELIST = ( 'localhost:3000', )
+CORS_ORIGIN_WHITELIST = ('localhost:3000',)

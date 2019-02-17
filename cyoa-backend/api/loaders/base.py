@@ -6,10 +6,10 @@ from .character import CharacterLoaders
 
 
 class Loaders(
-    AuthorLoaders,
-    StoryLoaders,
-    PassageLoaders,
-    ChoiceLoaders,
-    CharacterLoaders,
+        AuthorLoaders,
+        StoryLoaders,
+        PassageLoaders,
+        ChoiceLoaders,
+        CharacterLoaders,
 ):
     pass

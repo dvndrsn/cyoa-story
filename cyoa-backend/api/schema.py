@@ -3,4 +3,4 @@ import graphene
 from .query import Query
 
 
-schema = graphene.Schema(query=Query)
+SCHEMA = graphene.Schema(query=Query)

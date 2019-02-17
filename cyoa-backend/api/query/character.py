@@ -1,3 +1,5 @@
+from typing import Any
+
 import graphene
 
 from story.models import Character
@@ -7,20 +9,22 @@ class CharacterType(graphene.ObjectType):
 
     class Meta:
         interfaces = (graphene.Node, )
-    
+
     name = graphene.String()
     in_passage_connection = graphene.ConnectionField('api.query.passage.PassageConnection')
 
-    def resolve_in_passage_connection(self, info, **kwargs):
-        return info.context.loaders.passage_from_pov_character.load(self.id)
+    @staticmethod
+    def resolve_in_passage_connection(root: Character, info: graphene.ResolveInfo, **_):
+        return info.context.loaders.passage_from_pov_character.load(root.id)
 
     @classmethod
-    def is_type_of(cls, root, info):
+    def is_type_of(cls, root: Any, _: graphene.ResolveInfo):
         return isinstance(root, Character)
 
     @classmethod
-    def get_node(cls, info, id):
-        return info.context.loaders.character.load(int(id))
+    def get_node(cls, info: graphene.ResolveInfo, id_: str):
+        return info.context.loaders.character.load(int(id_))
+
 
 
 class Query(graphene.ObjectType):

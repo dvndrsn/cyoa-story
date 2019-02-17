@@ -35,12 +35,12 @@ class Choice(models.Model):
         on_delete=models.CASCADE,
         related_name='from_choices'
     )
-    
+
     description = models.CharField(max_length=255)
     is_main_story = models.BooleanField()
 
     def __str__(self):
-        return f'{self.from_passage.name}-{self.to_passage.name}: {self.description}'
+        return f'{self.from_passage_id}->{self.to_passage_id}: {self.description}'
 
 
 class Passage(models.Model):
@@ -74,4 +74,3 @@ class Character(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-

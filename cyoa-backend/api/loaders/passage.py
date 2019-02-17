@@ -17,5 +17,9 @@ class PassageLoaders:
 
     @cached_property
     def passage_from_pov_character(self):
-        passage_from_pov_character_load_fn = batch_load_foreign_key('story', 'Passage', 'pov_character')
-        return DataLoader(passage_from_pov_character_load_fn)
+        passage_from_pov_character_fn = batch_load_foreign_key(
+            'story',
+            'Passage',
+            'pov_character',
+        )
+        return DataLoader(passage_from_pov_character_fn)

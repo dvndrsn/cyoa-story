@@ -14,19 +14,21 @@ class ChoiceType(graphene.ObjectType):
     from_passage = graphene.Field('api.query.passage.PassageType')
     to_passage = graphene.Field('api.query.passage.PassageType')
 
-    def resolve_from_passage(self, info, **kwargs):
-        return info.context.loaders.passage.load(self.from_passage_id)
+    @staticmethod
+    def resolve_from_passage(root: Choice, info: graphene.ResolveInfo, **_):
+        return info.context.loaders.passage.load(root.from_passage_id)
 
-    def resolve_to_passage(self, info, **kwargs):
-        return info.context.loaders.passage.load(self.to_passage_id)
+    @staticmethod
+    def resolve_to_passage(root: Choice, info: graphene.ResolveInfo, **_):
+        return info.context.loaders.passage.load(root.to_passage_id)
 
     @classmethod
-    def is_type_of(cls, root, info):
+    def is_type_of(cls, root: Choice, _: graphene.ResolveInfo):
         return isinstance(root, Choice)
 
     @classmethod
-    def get_node(cls, info, id):
-        return info.context.loaders.choice.load(int(id))
+    def get_node(cls, info: graphene.ResolveInfo, id_: str):
+        return info.context.loaders.choice.load(int(id_))
 
 
 class ChoiceConnection(graphene.Connection):
