@@ -1,0 +1,122 @@
+query allStuff{
+  storyConnection {
+    edges {
+      node {
+        id
+        description
+        author {
+          id
+          firstName
+          lastName
+        }
+        passageConnection {
+          edges {
+            node {
+              id
+              description
+              povCharacter{
+                id
+                name
+              }
+              allChoices{
+                id
+                description
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query authorStuff{
+  author:node(id:"QXV0aG9yVHlwZToy"){
+    id
+    ... on AuthorType{
+      firstName
+      lastName
+      twitterAccount
+      storiesConnection {
+        edges {
+          node {
+            id
+            description
+          }
+        }
+      }
+    }
+  }
+}
+
+query storyStuff{
+  story: node(id:"U3RvcnlUeXBlOjI=") {
+    id
+    ... on StoryType{
+      description
+    }
+  }
+}
+
+query passageStuff{
+  passage:node(id:"UGFzc2FnZVR5cGU6MTQ0MA=="){
+    id
+    ... on PassageType{
+      description
+      allChoices{
+        id
+        description
+      }
+      povCharacter {
+        id
+        name
+      }
+      fromChoiceConnection {
+        edges {
+          node {
+            id
+            description
+          }
+        }
+      }
+    }
+    __typename
+  }
+}
+
+query characterStuff{
+  character: node(id:"Q2hhcmFjdGVyVHlwZToy"){
+    id
+    ... on CharacterType{
+      name
+      inPassageConnection {
+        edges {
+          node {
+            id
+            name
+            description
+          }
+        }
+      }
+    }
+  }
+}
+
+query choiceStuff{
+  choice: node(id:"Q2hvaWNlVHlwZToxNzg2"){
+    id
+    ... on ChoiceType{
+      description
+      toPassage{
+        id
+        name
+        description
+      }
+      fromPassage{
+        id
+        name
+        description
+      }
+    }
+  }
+}
