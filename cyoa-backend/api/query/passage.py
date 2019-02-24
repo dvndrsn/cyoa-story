@@ -1,6 +1,8 @@
+from typing import Any, List
+
 import graphene
 
-from story.models import Passage
+from story.models import Passage, Story, Character, Choice
 
 
 class PassageType(graphene.ObjectType):
@@ -18,27 +20,27 @@ class PassageType(graphene.ObjectType):
     from_choice_connection = graphene.ConnectionField('api.query.choice.ChoiceConnection')
 
     @staticmethod
-    def resolve_story(root: Passage, info: graphene.ResolveInfo):
+    def resolve_story(root: Passage, info: graphene.ResolveInfo) -> Story:
         return info.context.loaders.story.load(root.story_id)
 
     @staticmethod
-    def resolve_pov_character(root: Passage, info: graphene.ResolveInfo):
+    def resolve_pov_character(root: Passage, info: graphene.ResolveInfo) -> Character:
         return info.context.loaders.character.load(root.pov_character_id)
 
     @staticmethod
-    def resolve_all_choices(root: Passage, info: graphene.ResolveInfo):
+    def resolve_all_choices(root: Passage, info: graphene.ResolveInfo) -> List[Choice]:
         return info.context.loaders.choice_from_frompassage.load(root.id)
 
     @staticmethod
-    def resolve_from_choice_connection(root: Passage, info: graphene.ResolveInfo, **_):
+    def resolve_from_choice_connection(root: Passage, info: graphene.ResolveInfo, **_) -> List[Choice]:
         return info.context.loaders.choice_from_topassage.load(root.id)
 
     @classmethod
-    def is_type_of(cls, root: Passage, _: graphene.ResolveInfo):
+    def is_type_of(cls, root: Any, _: graphene.ResolveInfo) -> bool:
         return isinstance(root, Passage)
 
     @classmethod
-    def get_node(cls, info: graphene.ResolveInfo, id_: str):
+    def get_node(cls, info: graphene.ResolveInfo, id_: str) -> Passage:
         return info.context.loaders.passage.load(int(id_))
 
 

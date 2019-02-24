@@ -6,28 +6,57 @@ list:
 install_pipenv:
 	pip install pipenv
 
-install:
-	pipenv install
+install_dependencies:
+	pipenv install --dev
 
-remove:
+setup_dependencies: install_pipenv install_dependencies
+
+install_db:
+	echo "DB: Using SQLite"
+
+migrate_db:
+	pipenv run ./manage.py migrate
+
+setup_db: install_db migrate_db
+
+setup_seed:
+	echo "Seed: TBD"
+
+remove_dependencies:
 	pipenv --rm
 
-setup: install_pipenv install
+remove_db:
+	pipenv run ./manage.py flush
 
-reset: remove setup
+check_style:
+	pipenv run pylint **/*.py
+
+check_types:
+	pipenv run mypy **/*.py
+
+check_tests:
+	pipenv run ./manage.py test
+
+clean: remove_db remove_dependencies
+
+setup: setup_dependencies setup_db setup_seed
+
+install: install_dependencies
+
+migrate: migrate_db
+
+lint: check_style check_types
+
+test: check_tests
+
+check: lint test
+
+build: setup check
 
 shell:
 	pipenv shell
 
-start:
+start: migrate
 	pipenv run ./manage.py runserver
 
-lint:
-	pipenv run pylint **/*.py
-
-test:
-	pipenv run ./manage.py test
-
-verify: lint test
-
-build: setup verify
+all: build start

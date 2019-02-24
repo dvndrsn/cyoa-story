@@ -1,6 +1,8 @@
+from typing import Any
+
 import graphene
 
-from story.models import Choice
+from story.models import Choice, Passage
 
 
 class ChoiceType(graphene.ObjectType):
@@ -15,19 +17,19 @@ class ChoiceType(graphene.ObjectType):
     to_passage = graphene.Field('api.query.passage.PassageType')
 
     @staticmethod
-    def resolve_from_passage(root: Choice, info: graphene.ResolveInfo, **_):
+    def resolve_from_passage(root: Choice, info: graphene.ResolveInfo, **_) -> Passage:
         return info.context.loaders.passage.load(root.from_passage_id)
 
     @staticmethod
-    def resolve_to_passage(root: Choice, info: graphene.ResolveInfo, **_):
+    def resolve_to_passage(root: Choice, info: graphene.ResolveInfo, **_) -> Passage:
         return info.context.loaders.passage.load(root.to_passage_id)
 
     @classmethod
-    def is_type_of(cls, root: Choice, _: graphene.ResolveInfo):
+    def is_type_of(cls, root: Any, _: graphene.ResolveInfo) -> bool:
         return isinstance(root, Choice)
 
     @classmethod
-    def get_node(cls, info: graphene.ResolveInfo, id_: str):
+    def get_node(cls, info: graphene.ResolveInfo, id_: str) -> Choice:
         return info.context.loaders.choice.load(int(id_))
 
 

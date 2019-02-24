@@ -1,6 +1,8 @@
+from typing import Any, List, Iterable
+
 import graphene
 
-from story.models import Story
+from story.models import Story, Author, Passage
 
 
 class StoryType(graphene.ObjectType):
@@ -17,19 +19,19 @@ class StoryType(graphene.ObjectType):
     passage_connection = graphene.ConnectionField('api.query.passage.PassageConnection')
 
     @staticmethod
-    def resolve_author(root, info):
+    def resolve_author(root: Story, info: graphene.ResolveInfo) -> Author:
         return info.context.loaders.author.load(root.author_id)
 
     @staticmethod
-    def resolve_passage_connection(root, info, **_):
+    def resolve_passage_connection(root: Story, info: graphene.ResolveInfo, **_) -> List[Passage]:
         return info.context.loaders.passage_from_story.load(root.id)
 
     @classmethod
-    def is_type_of(cls, root, _):
+    def is_type_of(cls, root: Any, _: graphene.ResolveInfo) -> bool:
         return isinstance(root, Story)
 
     @classmethod
-    def get_node(cls, info, id_):
+    def get_node(cls, info: graphene.ResolveInfo, id_: str) -> Story:
         return info.context.loaders.story.load(int(id_))
 
 
@@ -43,5 +45,5 @@ class Query(graphene.ObjectType):
     story_connection = graphene.ConnectionField(StoryConnection)
 
     @staticmethod
-    def resolve_story_connection(root, info: graphene.ResolveInfo, **_):  # pylint: disable=unused-argument
+    def resolve_story_connection(root, _: graphene.ResolveInfo, **__) -> Iterable[Story]:
         return Story.objects.all()
