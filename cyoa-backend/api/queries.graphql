@@ -14,7 +14,7 @@ query allStuff{
             node {
               id
               description
-              povCharacter{
+              character{
                 id
                 name
               }
@@ -67,7 +67,7 @@ query passageStuff{
         id
         description
       }
-      povCharacter {
+      character {
         id
         name
       }
