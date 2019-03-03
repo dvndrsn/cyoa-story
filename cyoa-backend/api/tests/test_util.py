@@ -1,7 +1,7 @@
 from django.test import TestCase
 import graphene
 
-from api.util import to_global_id, from_global_id
+from api.util import to_global_id, from_global_id, GlobalID
 
 
 class TestGlobalId(TestCase):
@@ -15,7 +15,7 @@ class TestGlobalId(TestCase):
         encoded = to_global_id(TypeWithGlobalIDAndName, 2)
 
         decoded = from_global_id(encoded)
-        self.assertEqual(decoded, ('WithGlobalID', '2'))
+        self.assertEqual(decoded, GlobalID('WithGlobalID', 2))
 
     def test_to_global_id__can_be_decoded_from_default_name(self):
         class TypeWithGlobalIDWithoutName(graphene.ObjectType):
@@ -25,4 +25,4 @@ class TestGlobalId(TestCase):
         encoded = to_global_id(TypeWithGlobalIDWithoutName, 3)
 
         decoded = from_global_id(encoded)
-        self.assertEqual(decoded, ('TypeWithGlobalIDWithoutName', '3'))
+        self.assertEqual(decoded, GlobalID('TypeWithGlobalIDWithoutName', 3))

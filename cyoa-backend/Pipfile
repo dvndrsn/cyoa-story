@@ -11,6 +11,7 @@ graphene = "*"
 Django = "*"
 graphene-django = "*"
 django-cors-headers = "*"
+django-rest-framework = "*"
 
 [dev-packages]
 pylint = "*"

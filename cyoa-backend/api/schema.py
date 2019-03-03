@@ -4,7 +4,7 @@ from .query import Query
 from .mutation import Mutation
 
 
-schema = graphene.Schema(
+SCHEMA = graphene.Schema(
     query=Query,
     mutation=Mutation,
 )

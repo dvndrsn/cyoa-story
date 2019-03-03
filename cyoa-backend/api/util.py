@@ -12,5 +12,5 @@ GlobalID = namedtuple('GlobalID', ('type_name', 'type_id'))
 
 
 def from_global_id(global_id):
-    result = graphql_relay.from_global_id(global_id)
-    return GlobalID(*result)
+    type_name, type_id = graphql_relay.from_global_id(global_id)
+    return GlobalID(type_name, int(type_id))
