@@ -8,7 +8,7 @@ from api.util import to_global_id
 from story.factories import StoryFactory, AuthorFactory
 
 
-class TestStoryNodeQuery(TestCase):
+class TestAuthorNodeQuery(TestCase):
 
     def setUp(self):
         self.schema = graphene.Schema(query=Query, types=(AuthorType,))

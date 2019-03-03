@@ -89,7 +89,7 @@ query characterStuff{
     id
     ... on CharacterType{
       name
-      inPassageConnection {
+      inPassages {
         edges {
           node {
             id

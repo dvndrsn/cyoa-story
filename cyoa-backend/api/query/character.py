@@ -12,10 +12,10 @@ class CharacterType(graphene.ObjectType):
         interfaces = (graphene.Node, )
 
     name = graphene.String()
-    in_passage_connection = graphene.ConnectionField('api.query.passage.PassageConnection')
+    in_passages = graphene.ConnectionField('api.query.passage.PassageConnection')
 
     @staticmethod
-    def resolve_in_passage_connection(root: Character, info: graphene.ResolveInfo, **_) -> Promise[List[Passage]]:
+    def resolve_in_passages(root: Character, info: graphene.ResolveInfo, **_) -> Promise[List[Passage]]:
         return info.context.loaders.passage_from_pov_character.load(root.id)
 
     @classmethod
@@ -29,4 +29,4 @@ class CharacterType(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    pass
+    node = graphene.Node.Field()
