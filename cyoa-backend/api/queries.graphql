@@ -3,6 +3,8 @@ query allStuff{
     edges {
       node {
         id
+        title
+        subtitle
         description
         author {
           id
@@ -30,6 +32,23 @@ query allStuff{
   }
 }
 
+query stories{
+  stories{
+    edges {
+      node {
+        id
+        title
+        passages(first:1) {edges { node { id name } } }
+        author {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+}
+
 query authorStuff{
   author:node(id:"QXV0aG9yVHlwZToy"){
     id
@@ -49,11 +68,84 @@ query authorStuff{
   }
 }
 
+mutation createAuthorStuff{
+  createAuthor(input:{
+    firstName: "Dave",
+    lastName: "Anderson",
+    twitterAccount: "@dvndrsn"
+  }) {
+    author{
+      id
+      firstName
+      lastName
+      twitterAccount
+    }
+  }
+}
+
+mutation updateAuthorStuff{
+  updateAuthor(input:{
+    authorId: "QXV0aG9yVHlwZToy",
+    firstName: "Ryan",
+    lastName: "North",
+    twitterAccount: "@ryanqnorth"
+  }) {
+    author{
+      id
+      firstName
+      lastName
+      twitterAccount
+    }
+  }
+}
+
 query storyStuff{
   story: node(id:"U3RvcnlUeXBlOjI=") {
     id
     ... on StoryType{
       description
+    }
+  }
+}
+
+mutation createStoryStuff{
+  createStory (input: {
+    title: "User Story Mapping",
+    subtitle: "The whole story",
+    description: "A product management book",
+    publishedYear: "2017"
+    authorId: "QXV0aG9yVHlwZToy"
+  }) {
+    story {
+      id
+      title
+      subtitle
+      description
+      publishedYear
+    }
+  }
+}
+
+mutation updateStoryStuff{
+  updateStory(input:{
+    storyId: "U3RvcnlUeXBlOjM=",
+    title: "User Story Mapping",
+    subtitle: "The whole story and stuff",
+    description: "A product management book",
+    publishedYear: "2017"
+    authorId: "QXV0aG9yVHlwZToz"
+  }) {
+    story {
+      id
+      title
+      subtitle
+      description
+      publishedYear
+      author{
+        id
+        firstName
+        lastName
+      }
     }
   }
 }
@@ -76,6 +168,46 @@ query passageStuff{
   }
 }
 
+mutation createPassageStuff{
+  createPassage(input:{
+    name: "Chapter 1",
+    description: "Become the best",
+    isEnding: true,
+    characterId: "Q2hhcmFjdGVyVHlwZToxNA==" # big bobby
+    storyId: "U3RvcnlUeXBlOjM=" # user story mapping
+  }) {
+    passage{
+      id
+      description
+      allChoices { id description }
+      isEnding
+      character { id name }
+      story { id title }
+    }
+  }
+}
+
+mutation updatePassageStuff{
+  updatePassage(input:{
+    passageId: "UGFzc2FnZVR5cGU6MTkxMw==",
+    name: "Chapter 1",
+    description: "Something interesting",
+    isEnding: false,
+    characterId: "Q2hhcmFjdGVyVHlwZToxNA==" # big bobby
+    storyId: "U3RvcnlUeXBlOjM=" # user story mapping
+  }){
+    passage{
+      id
+      name
+      description
+      allChoices { id description }
+      isEnding
+      character { id name }
+      story { id title }
+    }
+  }
+}
+
 query characterStuff{
   character: node(id:"Q2hhcmFjdGVyVHlwZToy"){
     id
@@ -90,6 +222,29 @@ query characterStuff{
           }
         }
       }
+    }
+  }
+}
+
+mutation createCharacterStuff{
+  createCharacter(input:{
+    name: "Lil bobby"
+  }) {
+    character {
+      id
+      name
+    }
+  }
+}
+
+mutation updateCharacterStuff{
+  updateCharacter(input:{
+    characterId: "Q2hhcmFjdGVyVHlwZToxNA==",
+    name: "Big bobby"
+  }) {
+    character {
+      id
+      name
     }
   }
 }
@@ -109,6 +264,41 @@ query choiceStuff{
         name
         description
       }
+    }
+  }
+}
+
+mutation createChoiceStuff{
+  createChoice(input:{
+    description: "keep reading forever",
+    isMainStory: false,
+    fromPassageId: "UGFzc2FnZVR5cGU6MTkxMw==",
+    toPassageId: "UGFzc2FnZVR5cGU6MTkxMw==",
+  }) {
+    choice{
+      id
+      description
+      isMainStory
+      fromPassage { id name }
+      toPassage { id name }
+    }
+  }
+}
+
+mutation updateChoiceStuff{
+  updateChoice(input:{
+    choiceId: "Q2hvaWNlVHlwZToyNjY4",
+    description: "Keep reading forever",
+    isMainStory: false,
+      fromPassageId: "UGFzc2FnZVR5cGU6MTkxMw==",
+    toPassageId: "UGFzc2FnZVR5cGU6MTkxMw==",
+  }) {
+    choice{
+      id
+      description
+      isMainStory
+      fromPassage { id name }
+      toPassage { id name }
     }
   }
 }
