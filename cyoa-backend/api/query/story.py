@@ -17,14 +17,14 @@ class StoryType(graphene.ObjectType):
     published_year = graphene.String()
 
     author = graphene.Field('api.query.author.AuthorType')
-    passage_connection = graphene.ConnectionField('api.query.passage.PassageConnection')
+    passages = graphene.ConnectionField('api.query.passage.PassageConnection')
 
     @staticmethod
     def resolve_author(root: Story, info: graphene.ResolveInfo) -> Promise[Author]:
         return info.context.loaders.author.load(root.author_id)
 
     @staticmethod
-    def resolve_passage_connection(root: Story, info: graphene.ResolveInfo, **_) -> Promise[List[Passage]]:
+    def resolve_passages(root: Story, info: graphene.ResolveInfo, **_) -> Promise[List[Passage]]:
         return info.context.loaders.passage_from_story.load(root.id)
 
     @classmethod
@@ -43,8 +43,9 @@ class StoryConnection(graphene.Connection):
 
 
 class Query(graphene.ObjectType):
-    story_connection = graphene.ConnectionField(StoryConnection)
+    stories = graphene.ConnectionField(StoryConnection)
+    node = graphene.Node.Field()
 
     @staticmethod
-    def resolve_story_connection(root, _: graphene.ResolveInfo, **__) -> Iterable[Story]:
+    def resolve_stories(root, _: graphene.ResolveInfo, **__) -> Iterable[Story]:
         return Story.objects.all()

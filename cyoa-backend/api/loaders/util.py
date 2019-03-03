@@ -50,7 +50,7 @@ def batch_load_primary_key(app_name, model_name):
         model_map = {}
         for model_record in model_records:
             model_map[model_record.id] = model_record
-        return [model_map[model_id] for model_id in model_ids]
+        return [model_map.get(model_id) for model_id in model_ids]
     return batch_load_fn
 
 

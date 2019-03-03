@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
 
 [packages]
 graphene = "*"
@@ -18,3 +18,4 @@ pylint-django = "*"
 ipdb = "*"
 mypy = "*"
 django-stubs = "*"
+factory-boy = "*"

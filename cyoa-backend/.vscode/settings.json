@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/onenote/.local/share/virtualenvs/cyoa-backend-ea38Xmc9/bin/python"
+    "python.pythonPath": "/home/onenote/.local/share/virtualenvs/cyoa-backend-ea38Xmc9/bin/python",
+    "python.linting.pylintEnabled": true
 }
