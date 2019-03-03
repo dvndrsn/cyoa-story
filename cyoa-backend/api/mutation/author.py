@@ -1,3 +1,5 @@
+from typing import Any
+
 import graphene
 
 from api.util import from_global_id
@@ -14,7 +16,7 @@ class CreateAuthor(graphene.ClientIDMutation):
     author = graphene.Field('api.query.author.AuthorType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'CreateAuthor':
         serializer = AuthorService(data={
             'first_name': input_data['first_name'],
             'last_name': input_data['last_name'],
@@ -36,7 +38,7 @@ class UpdateAuthor(graphene.ClientIDMutation):
     author = graphene.Field('api.query.author.AuthorType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'UpdateAuthor':
         author = from_global_id(input_data['author_id'])
         serializer = AuthorService.for_instance(author.type_id, data={
             'first_name': input_data['first_name'],

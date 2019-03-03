@@ -1,3 +1,5 @@
+from typing import Any
+
 import graphene
 
 from api.util import from_global_id
@@ -15,7 +17,7 @@ class CreateChoice(graphene.ClientIDMutation):
     choice = graphene.Field('api.query.choice.ChoiceType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'CreateChoice':
         serializer = ChoiceService(data={
             'description': input_data['description'],
             'is_main_story': input_data['is_main_story'],
@@ -39,7 +41,7 @@ class UpdateChoice(graphene.ClientIDMutation):
     choice = graphene.Field('api.query.choice.ChoiceType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'UpdateChoice':
         decoded = from_global_id(input_data['choice_id'])
         serializer = ChoiceService.for_instance(decoded.type_id, data={
             'description': input_data['description'],

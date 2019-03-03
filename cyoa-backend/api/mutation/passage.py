@@ -1,3 +1,5 @@
+from typing import Any
+
 import graphene
 
 from api.util import from_global_id
@@ -16,7 +18,7 @@ class CreatePassage(graphene.ClientIDMutation):
     passage = graphene.Field('api.query.passage.PassageType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'CreatePassage':
         serializer = PassageService(data={
             'name': input_data['name'],
             'description': input_data['description'],
@@ -42,7 +44,7 @@ class UpdatePassage(graphene.ClientIDMutation):
     passage = graphene.Field('api.query.passage.PassageType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'UpdatePassage':
         decoded = from_global_id(input_data['passage_id'])
         serializer = PassageService.for_instance(decoded.type_id, data={
             'name': input_data['name'],

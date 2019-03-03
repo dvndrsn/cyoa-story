@@ -1,3 +1,5 @@
+from typing import Any
+
 import graphene
 
 from api.util import from_global_id
@@ -16,7 +18,7 @@ class CreateStory(graphene.ClientIDMutation):
     story = graphene.Field('api.query.story.StoryType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'CreateStory':
         serializer = StoryService(data={
             'title': input_data['title'],
             'subtitle': input_data['subtitle'],
@@ -42,7 +44,7 @@ class UpdateStory(graphene.ClientIDMutation):
     story = graphene.Field('api.query.story.StoryType')
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, **input_data):
+    def mutate_and_get_payload(cls, root: Any, info: graphene.ResolveInfo, **input_data: dict) -> 'UpdateStory':
         story = from_global_id(input_data['story_id'])
         serializer = StoryService.for_instance(story.type_id, data={
             'title': input_data['title'],
