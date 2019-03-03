@@ -39,3 +39,13 @@ class PassageFactory(DjangoModelFactory):
     is_ending = False
     story = SubFactory(StoryFactory)
     pov_character = SubFactory(CharacterFactory)
+
+
+class ChoiceFactory(DjangoModelFactory):
+    class Meta:
+        model = models.Choice
+
+    from_passage = SubFactory(PassageFactory)
+    to_passage = SubFactory(PassageFactory)
+    description = 'One big step'
+    is_main_story = False

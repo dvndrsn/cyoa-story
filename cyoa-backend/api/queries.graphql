@@ -71,14 +71,6 @@ query passageStuff{
         id
         name
       }
-      fromChoiceConnection {
-        edges {
-          node {
-            id
-            description
-          }
-        }
-      }
     }
     __typename
   }
