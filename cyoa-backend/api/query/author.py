@@ -15,10 +15,10 @@ class AuthorType(graphene.ObjectType):
     last_name = graphene.String()
     twitter_account = graphene.String()
 
-    stories_connection = graphene.ConnectionField('api.query.story.StoryConnection')
+    stories = graphene.ConnectionField('api.query.story.StoryConnection')
 
     @staticmethod
-    def resolve_stories_connection(root: Author, info: graphene.ResolveInfo, **_) -> Promise[List[Story]]:
+    def resolve_stories(root: Author, info: graphene.ResolveInfo, **_) -> Promise[List[Story]]:
         return info.context.loaders.stories_from_author.load(root.id)
 
     @classmethod
@@ -31,4 +31,4 @@ class AuthorType(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    pass
+    node = graphene.Node.Field()

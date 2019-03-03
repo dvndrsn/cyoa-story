@@ -37,7 +37,7 @@ query authorStuff{
       firstName
       lastName
       twitterAccount
-      storiesConnection {
+      stories {
         edges {
           node {
             id
