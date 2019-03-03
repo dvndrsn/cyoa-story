@@ -41,4 +41,4 @@ class ChoiceConnection(graphene.Connection):
 
 
 class Query(graphene.ObjectType):
-    pass
+    node = graphene.Node.Field()
