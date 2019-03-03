@@ -1,7 +1,7 @@
 from django.test import TestCase
 import graphene
 
-from api.util import to_global_id, from_global_id, GlobalID
+from api.utils import to_global_id, from_global_id, GlobalID
 
 
 class TestGlobalId(TestCase):

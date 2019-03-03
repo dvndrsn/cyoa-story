@@ -4,7 +4,7 @@ import graphene
 from api.query.author import Query, AuthorType
 from api.query.story import StoryType
 from api.tests.util import connection_to_list, request_with_loaders
-from api.util import to_global_id
+from api.utils import to_global_id
 from story.factories import StoryFactory, AuthorFactory
 
 

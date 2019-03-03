@@ -2,8 +2,8 @@ from typing import Any
 
 import graphene
 
-from api.util import from_global_id
-from story.services.story import StoryService
+from api.utils import from_global_id
+from story.services import StoryService
 
 
 class CreateStory(graphene.ClientIDMutation):

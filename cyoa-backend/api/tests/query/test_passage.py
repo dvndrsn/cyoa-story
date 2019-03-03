@@ -6,7 +6,7 @@ from api.query.choice import ChoiceType
 from api.query.passage import Query, PassageType
 from api.query.story import StoryType
 from api.tests.util import request_with_loaders
-from api.util import to_global_id
+from api.utils import to_global_id
 from story.factories import StoryFactory, PassageFactory, CharacterFactory, ChoiceFactory
 
 

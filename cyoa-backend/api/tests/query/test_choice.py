@@ -4,7 +4,7 @@ import graphene
 from api.query.choice import ChoiceType, Query
 from api.query.passage import PassageType
 from api.tests.util import request_with_loaders
-from api.util import to_global_id
+from api.utils import to_global_id
 from story.factories import PassageFactory, ChoiceFactory
 
 
