@@ -6,6 +6,11 @@ from promise import Promise
 from story.models import Story, Author, Passage
 
 
+class AuthorDisplayNameEnum(graphene.Enum):
+    FIRST_LAST = Author.DISPLAY_FIRST_LAST
+    LAST_FIRST = Author.DISPLAY_LAST_FIRST
+
+
 class StoryType(graphene.ObjectType):
 
     class Meta:
@@ -15,9 +20,23 @@ class StoryType(graphene.ObjectType):
     subtitle = graphene.String()
     description = graphene.String()
     published_year = graphene.String()
+    author_name = graphene.String(
+        deprecation_reason='Use `AuthorType.fullName`.',
+        args={
+            'display': graphene.Argument(
+                AuthorDisplayNameEnum,
+                default_value=AuthorDisplayNameEnum.FIRST_LAST,
+                description='Display format to use for Full Name of Author - default FIRST_LAST.'
+            )
+        }
+    )
 
     author = graphene.Field('api.query.author.AuthorType')
     passages = graphene.ConnectionField('api.query.passage.PassageConnection')
+
+    @staticmethod
+    def resolve_author_name(root: Story, info: graphene.ResolveInfo, display):
+        return root.author.full_name(display)
 
     @staticmethod
     def resolve_author(root: Story, info: graphene.ResolveInfo) -> Promise[Author]:

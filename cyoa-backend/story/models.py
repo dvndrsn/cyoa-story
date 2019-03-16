@@ -6,6 +6,14 @@ class Author(models.Model):
     last_name = models.CharField(max_length=50)
     twitter_account = models.CharField(max_length=50)
 
+    DISPLAY_FIRST_LAST = 'first_last'
+    DISPLAY_LAST_FIRST = 'last_first'
+
+    def full_name(self, display_format: str) -> str:
+        if display_format == self.DISPLAY_FIRST_LAST:
+            return f'{self.first_name} {self.last_name}'
+        return f'{self.last_name}, {self.first_name}'
+
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}'
 
