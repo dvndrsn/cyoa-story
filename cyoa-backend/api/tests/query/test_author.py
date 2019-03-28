@@ -1,5 +1,6 @@
 from django.test import TestCase
 import graphene
+from graphql import GraphQLError
 
 from api.query.author import Query, AuthorType
 from api.query.story import StoryType
@@ -77,3 +78,23 @@ class TestAuthorNodeQuery(TestCase):
             {'id': to_global_id(StoryType, 2)},
             {'id': to_global_id(StoryType, 4)},
         ])
+
+    def test_author_full_name_field__without_required_parameter(self):
+        AuthorFactory.create(
+            id=3,
+            first_name='Buddy',
+            last_name='Holly',
+        )
+        query_string = self.build_query_with_fields(
+            'id',
+            'firstName',
+            'fullName',
+        )
+        variables = {'id': to_global_id(AuthorType, 3)}
+
+        result = self.schema.execute(query_string, context=self.request, variables=variables)
+        first_error = result.errors[0]
+
+        expected_error = GraphQLError('Field "fullName" argument "display" of type "AuthorDisplayNameEnum!" is required but not provided.')
+        self.assertEqual(first_error.message, expected_error.message)
+        self.assertIsNone(result.data)

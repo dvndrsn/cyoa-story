@@ -4,11 +4,7 @@ import graphene
 from promise import Promise
 
 from story.models import Story, Author, Passage
-
-
-class AuthorDisplayNameEnum(graphene.Enum):
-    FIRST_LAST = Author.DISPLAY_FIRST_LAST
-    LAST_FIRST = Author.DISPLAY_LAST_FIRST
+from api.query.author import AuthorDisplayNameEnum
 
 
 class StoryType(graphene.ObjectType):

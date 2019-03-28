@@ -12,6 +12,7 @@ Django = "*"
 graphene-django = "*"
 django-cors-headers = "*"
 django-rest-framework = "*"
+graphql-core = "*"
 
 [dev-packages]
 pylint = "*"
